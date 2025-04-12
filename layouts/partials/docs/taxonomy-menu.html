@@ -1,0 +1,39 @@
+{{ $current := .Page }}
+<ul>
+    {{ range $taxonomy, $terms := .Site.Taxonomies }}
+    <li>
+        <input type="checkbox" id="taxonomy-{{ $taxonomy | urlize }}" class="toggle" 
+               {{ if or (eq $current.Kind "taxonomy") (eq $current.Section $taxonomy) }}checked{{ end }} />
+        <label for="taxonomy-{{ $taxonomy | urlize }}" class="flex justify-between">
+            <a href="{{ printf "/%s" $taxonomy | urlize | relURL }}" 
+               class="{{ if eq $current.Section $taxonomy }}active{{ end }}">
+                {{ humanize $taxonomy }}
+            </a>
+        </label>
+        <ul>
+            {{ range $term, $pages := $terms }}
+            <li>
+                <input type="checkbox" id="term-{{ $term | urlize }}" class="toggle" 
+                       {{ if or (and (eq $current.Kind "term") (eq $current.Title $term)) (in $pages $current) }}checked{{ end }} />
+                <label for="term-{{ $term | urlize }}" class="flex justify-between">
+                    <a href="{{ printf "/%s/%s" $taxonomy $term | urlize | relURL }}"
+                       class="{{ if eq $current.Title $term }}active{{ end }}">
+                        {{ humanize $term }}
+                    </a>
+                </label>
+                <ul>
+                    {{ range $pages }}
+                    <li>
+                        <a href="{{ .RelPermalink }}"
+                           class="{{ if eq $current.RelPermalink .RelPermalink }}active{{ end }}">
+                            {{ .Title }}
+                        </a>
+                    </li>
+                    {{ end }}
+                </ul>
+            </li>
+            {{ end }}
+        </ul>
+    </li>
+    {{ end }}
+</ul>
